@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redirect to LINE</title>
+  <script>
+    async function openLineLink() {
+      const sheetUrl = "https://script.google.com/macros/s/AKfycbxwthG35rLf9hU8fFxu-AzsOtvc2D6G_kpPaXUi-gqvFsqOR1gV3ZQCEaIILcCYfniRkQ/exec"; // ใส่ URL ของ Google Apps Script
+      try {
+        let response = await fetch(sheetUrl);
+        let data = await response.json();
+        
+        if (data.error) {
+          alert("เกิดข้อผิดพลาด: " + data.error);
+          return;
+        }
+
+        let lineLink = data.links[0] || "https://lin.ee/xxxx"; // ใช้ลิงก์แรกในชีต
+
+        // ตรวจสอบระบบปฏิบัติการ
+        let userAgent = navigator.userAgent.toLowerCase();
+        let isAndroid = userAgent.includes("android");
+        let isIOS = /iphone|ipad|ipod/.test(userAgent);
+        
+        if (isAndroid) {
+          lineLink = `intent://${lineLink.replace("https://", "")}#Intent;package=jp.naver.line.android;scheme=https;end;`;
+        }
+
+        // เปิดลิงก์อัตโนมัติ
+        window.location.href = lineLink;
+
+      } catch (error) {
+        alert("Error: " + error.message);
+      }
+    }
+
+    window.onload = openLineLink;
+  </script>
+</head>
+<body>
+  <p>กำลังเปลี่ยนเส้นทางไปยัง LINE...</p>
+  <button onclick="openLineLink()">เปิด LINE ด้วยตนเอง</button>
+</body>
+</html>
